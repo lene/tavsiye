@@ -31,3 +31,5 @@ def comparison_with_dict(sets, similarity = jaccard_coefficient):
         } for (user1, set1) in sets.items()
     }
 
+def similar_users(user, similarity_matrix, cutoff):
+    return [ other_user for other_user in similarity_matrix[user] if user != other_user and similarity_matrix[user][other_user] >= cutoff ]

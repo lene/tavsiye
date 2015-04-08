@@ -1,4 +1,4 @@
-from compare_sets import jaccard_coefficient, naive_comparison, comparison_with_dict
+from compare_sets import jaccard_coefficient, naive_comparison, comparison_with_dict, similar_users
 from read_file import read_file
 
 __author__ = 'lene'
@@ -57,6 +57,19 @@ class TestRecommender(unittest.TestCase):
                 5: {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0, 5: 1.0}
             }
         )
+
+    def test_similar_users(self):
+        similarity = comparison_with_dict({ 1: {'a'}, 2: {'a'} })
+        self.assertEqual(similar_users(1, similarity, 0.2), [2])
+        self.assertEqual(similar_users(2, similarity, 0.2), [1])
+        self.assertEqual(similar_users(1, similarity, 1.0), [2])
+
+        similarity = comparison_with_dict({ 1: {'a'}, 2: {'b'} })
+        self.assertEqual(similar_users(1, similarity, 0.2), [])
+
+        similarity = comparison_with_dict(read_file('testdata.csv'))
+        self.assertEqual(similar_users(1, similarity, 0.2), [3])
+        self.assertEqual(similar_users(2, similarity, 0.15), [1, 4])
 
 if __name__ == '__main__':
     unittest.main()
