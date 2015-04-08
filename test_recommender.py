@@ -1,4 +1,4 @@
-from compare_sets import jaccard_coefficient, naive_comparison
+from compare_sets import jaccard_coefficient, naive_comparison, comparison_with_dict
 from read_file import read_file
 
 __author__ = 'lene'
@@ -38,6 +38,15 @@ class TestRecommender(unittest.TestCase):
         self.assertIsInstance(csv, dict)
         self.assertEqual(len(csv), 5)
         self.assertDictEqual(csv, { 1: {12, 99, 32}, 2: {32, 77, 54, 66}, 3: {99, 42, 12, 32}, 4: {77, 66, 47}, 5: {65}})
+
+    def test_comparison_with_dicts(self):
+        self.assertDictEqual(
+            comparison_with_dict({ 1: {'a'}, 2: {'a'} }), { 1: { 1: 1.0, 2: 1.0 }, 2: { 1: 1.0, 2: 1.0 } }
+        )
+        self.assertDictEqual(
+            comparison_with_dict({ 1: {'a'}, 2: {'b'} }), { 1: { 1: 1.0, 2: 0.0 }, 2: { 1: 0.0, 2: 1.0 } }
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
