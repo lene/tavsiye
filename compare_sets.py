@@ -3,9 +3,6 @@ from __future__ import print_function
 
 __author__ = 'lene'
 
-from read_file import read_file
-from collections import OrderedDict
-
 def jaccard_coefficient(set1, set2):
     """
     A measure of similarity between two sets. Always between 0 (completely disjunct) and
@@ -13,7 +10,7 @@ def jaccard_coefficient(set1, set2):
     """
     return len(set1 & set2)/len(set1 | set2)
 
-def comparison_with_dict(sets, similarity = jaccard_coefficient):
+def similarity_matrix(sets, similarity = jaccard_coefficient):
     """
     :param sets:    A dict of sets. Jaccard distance is computed between each pair of sets.
     :return:        Two-dimensional dict of jaccard distances between each pair of sets, indexed with the user
