@@ -26,6 +26,13 @@ class TestRecommender(unittest.TestCase):
     def test_naive_comparison_different_sizes(self):
         self.assertEqual(naive_comparison([{'a', 'b'}, {'a'}]), [[1., 0.5], [0.5, 1.]])
 
+    def test_naive_comparison_elements_equal_to_themselves(self):
+        larger_list = [ {i} for i in range(100) ]
+        larger_list_matrix = naive_comparison(larger_list)
+        self.assertEqual(len(larger_list_matrix), len(larger_list))
+        for i in range(len(larger_list)):
+            self.assertEqual(larger_list_matrix[i][i], 1.)
+
     def test_read_file(self):
         csv = read_file('testdata.csv')
         self.assertIsInstance(csv, dict)
