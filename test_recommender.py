@@ -47,6 +47,16 @@ class TestRecommender(unittest.TestCase):
             comparison_with_dict({ 1: {'a'}, 2: {'b'} }), { 1: { 1: 1.0, 2: 0.0 }, 2: { 1: 0.0, 2: 1.0 } }
         )
 
+    def test_comparison_with_testdata(self):
+        self.assertDictEqual(
+            comparison_with_dict(read_file('testdata.csv')), {
+                1: {1: 1.0, 2: 0.16666666666666666, 3: 0.75, 4: 0.0, 5: 0.0},
+                2: {1: 0.16666666666666666, 2: 1.0, 3: 0.14285714285714285, 4: 0.4, 5: 0.0},
+                3: {1: 0.75, 2: 0.14285714285714285, 3: 1.0, 4: 0.0, 5: 0.0},
+                4: {1: 0.0, 2: 0.4, 3: 0.0, 4: 1.0, 5: 0.0},
+                5: {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0, 5: 1.0}
+            }
+        )
 
 if __name__ == '__main__':
     unittest.main()

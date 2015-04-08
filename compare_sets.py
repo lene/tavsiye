@@ -31,6 +31,3 @@ def comparison_with_dict(sets, similarity = jaccard_coefficient):
         } for (user1, set1) in sets.items()
     }
 
-if __name__ == '__main__':
-
-    print(comparison_with_dict(read_file('testdata.csv')))
