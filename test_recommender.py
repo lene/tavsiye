@@ -30,7 +30,7 @@ class TestRecommender(unittest.TestCase):
         csv = read_file('testdata.csv')
         self.assertIsInstance(csv, dict)
         self.assertEqual(len(csv), 5)
-        self.assertDictEqual(csv, { 1: [12, 99, 32], 2: [32, 77, 54, 66], 3: [99, 42, 12, 32], 4: [77, 66, 47], 5: [65]})
+        self.assertDictEqual(csv, { 1: {12, 99, 32}, 2: {32, 77, 54, 66}, 3: {99, 42, 12, 32}, 4: {77, 66, 47}, 5: {65}})
 
 if __name__ == '__main__':
     unittest.main()

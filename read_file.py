@@ -13,7 +13,7 @@ def read_file(filename):
 def read_from_reader(reader):
     values = {}
     for row in reader:
-        values[int(row[0])] = values[int(row[0])] + [int(row[1])] if int(row[0]) in values else [int(row[1])]
+        values[int(row[0])] = values[int(row[0])] | {int(row[1])} if int(row[0]) in values else {int(row[1])}
 
     return values
 
