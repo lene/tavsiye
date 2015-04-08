@@ -13,13 +13,6 @@ def jaccard_coefficient(set1, set2):
     """
     return len(set1 & set2)/len(set1 | set2)
 
-def naive_comparison(sets, similarity = jaccard_coefficient):
-    """
-    :param sets:    A list of sets. Jaccard distance is computed between each pair of sets.
-    :return:        Matrix of jaccard distances between each pair of sets in the list.
-    """
-    return [ [ similarity(set1, set2) for set2 in sets] for set1 in sets ]
-
 def comparison_with_dict(sets, similarity = jaccard_coefficient):
     """
     :param sets:    A dict of sets. Jaccard distance is computed between each pair of sets.
