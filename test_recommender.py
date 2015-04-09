@@ -64,5 +64,20 @@ class TestRecommender(unittest.TestCase):
         self.assertEqual(recommendations(1, sets, similarity, 0.4), {'b'})
         self.assertEqual(recommendations(2, sets, similarity, 0.4), set())
 
+    def test_recommendations_with_testdata(self):
+        sets = read_file('testdata.csv')
+        similarity = similarity_matrix(sets)
+        self.assertEqual(recommendations(1, sets, similarity, 0.75), {42})
+        self.assertFalse(recommendations(3, sets, similarity, 0.75))
+        self.assertEqual(
+            recommendations(1, sets, similarity, 0.15),
+            (sets[2] | sets[3]) - sets[1]
+        )
+        for i in sets.keys():
+            self.assertEqual(
+                recommendations(i, sets, similarity, 0),
+                reduce(lambda a, b: a | b, sets.values(), set()) - sets[i]
+            )
+
 if __name__ == '__main__':
     unittest.main()
