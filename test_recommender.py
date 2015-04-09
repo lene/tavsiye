@@ -1,5 +1,5 @@
 from compare_sets import jaccard_coefficient, similarity_matrix, similar_users, recommendations
-from alternative_methods import asymmetric_similarity
+from alternative_methods import asymmetric_similarity, minhash_similarity, minhashed
 from read_file import read_file
 
 __author__ = 'lene'
@@ -102,6 +102,25 @@ class TestRecommender(unittest.TestCase):
                 recommendations(i, sets, similarity1, 0.25).issubset(recommendations(i, sets, similarity2, 0.25))
             )
 
+    def test_minhash(self):
+        self.assertEqual(minhashed({1}), {1})
+        self.assertEqual(minhashed({1}, 2), {1})
+        bigger_set = { i for i in range(100) }
+        self.assertLessEqual(len(minhashed(bigger_set, 10)), 10)
+
+    def test_minhash_similarity(self):
+        self.assertEqual(minhash_similarity({1, 2}, {3, 4}), 0.)
+        self.assertEqual(minhash_similarity({1, 2}, {2, 1}), 1.)
+
+    def test_minhash_with_testdata(self):
+        sets = read_file('testdata.csv')
+        similarity = similarity_matrix(sets, minhash_similarity)
+        self.assertEqual(recommendations(1, sets, similarity, 0.75), {42})
+        self.assertFalse(recommendations(3, sets, similarity, 0.75))
+        self.assertEqual(
+            recommendations(1, sets, similarity, 0.15),
+            (sets[2] | sets[3]) - sets[1]
+        )
 
 if __name__ == '__main__':
     unittest.main()
