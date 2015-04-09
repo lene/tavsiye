@@ -30,4 +30,3 @@ def similar_users(user, similarity_matrix, cutoff):
 def recommendations(user, sets, similarity_matrix, cutoff):
     return { item for similar in similar_users(user, similarity_matrix, cutoff)
                   for item in sets[similar] - sets[user] }
-

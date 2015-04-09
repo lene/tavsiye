@@ -1,4 +1,5 @@
 from compare_sets import jaccard_coefficient, similarity_matrix, similar_users, recommendations
+from alternative_methods import asymmetric_similarity
 from read_file import read_file
 
 __author__ = 'lene'
@@ -73,11 +74,34 @@ class TestRecommender(unittest.TestCase):
             recommendations(1, sets, similarity, 0.15),
             (sets[2] | sets[3]) - sets[1]
         )
+
+    def test_recommendations_with_zero_cutoff_returns_all_other_products(self):
+        sets = read_file('testdata.csv')
+        similarity = similarity_matrix(sets)
         for i in sets.keys():
             self.assertEqual(
                 recommendations(i, sets, similarity, 0),
                 reduce(lambda a, b: a | b, sets.values(), set()) - sets[i]
             )
+
+    def test_asymmetric_similarity(self):
+        self.assertEqual(asymmetric_similarity({'a'}, {'a', 'b'}), 1)
+        self.assertEqual(asymmetric_similarity({'a', 'b'}, {'a'}), 0.5)
+        sets = { 1: {'a'}, 2: {'a', 'b'} }
+        similarity = similarity_matrix(sets, asymmetric_similarity)
+        self.assertDictEqual(
+            similarity, { 1: { 1: 1.0, 2: 1.0 }, 2: { 1: 0.5, 2: 1.0 } }
+        )
+
+    def test_asymmetric_similarity_returns_superset_of_jaccard(self):
+        sets = read_file('testdata.csv')
+        similarity1 = similarity_matrix(sets)
+        similarity2 = similarity_matrix(sets, asymmetric_similarity)
+        for i in sets.keys():
+            self.assertTrue(
+                recommendations(i, sets, similarity1, 0.25).issubset(recommendations(i, sets, similarity2, 0.25))
+            )
+
 
 if __name__ == '__main__':
     unittest.main()
