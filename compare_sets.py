@@ -3,7 +3,6 @@ from __future__ import print_function
 
 __author__ = 'lene'
 
-
 def jaccard_coefficient(set1, set2):
     """
     A measure of similarity between two sets. Always between 0 (completely disjunct) and
@@ -30,3 +29,11 @@ def similar_users(user, similarity_matrix, cutoff):
 def recommendations(user, sets, similarity_matrix, cutoff):
     return { item for similar in similar_users(user, similarity_matrix, cutoff)
                   for item in sets[similar] - sets[user] }
+
+def example_use():
+    from read_file import read_file
+    sets = read_file('testdata.csv')
+    similarity = similarity_matrix(sets)
+    user = 1
+    cutoff = 0.25
+    print(recommendations(user, sets, similarity, cutoff))
