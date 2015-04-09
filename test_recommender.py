@@ -1,4 +1,4 @@
-from compare_sets import jaccard_coefficient, similarity_matrix, similar_users
+from compare_sets import jaccard_coefficient, similarity_matrix, similar_users, recommendations
 from read_file import read_file
 
 __author__ = 'lene'
@@ -57,6 +57,12 @@ class TestRecommender(unittest.TestCase):
         similarity = similarity_matrix(read_file('testdata.csv'))
         self.assertEqual(similar_users(1, similarity, 0.2), [3])
         self.assertEqual(similar_users(2, similarity, 0.15), [1, 4])
+
+    def test_recommendations(self):
+        sets = { 1: {'a'}, 2: {'a', 'b'} }
+        similarity = similarity_matrix(sets)
+        self.assertEqual(recommendations(1, sets, similarity, 0.4), {'b'})
+        self.assertEqual(recommendations(2, sets, similarity, 0.4), set())
 
 if __name__ == '__main__':
     unittest.main()
