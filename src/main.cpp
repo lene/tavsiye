@@ -1,22 +1,30 @@
 
-#include "BenchmarkVienna.h"
-
 #include "FileReader.h"
+#include "MatrixPrinter.h"
+#include "VectorPrinter.h"
 #include "CostFunction.h"
 
+#define VIENNACL_WITH_UBLAS 1
+#define VIENNACL_WITH_OPENCL 0
+
+#ifndef NDEBUG
+ #define NDEBUG
+#endif
+
 typedef float ScalarType;
+typedef viennacl::vector<ScalarType> VectorType;
+typedef viennacl::matrix<ScalarType> MatrixType;
 
 int main() {
 
-    viennacl::matrix<ScalarType> X = FileReader::X<ScalarType>(std::string(""));
-    viennacl::vector<ScalarType> y = FileReader::y<ScalarType>(std::string(""));
-    viennacl::vector<ScalarType> theta(y.size());
+    MatrixType X = FileReader::X<ScalarType>(std::string(""));
+    VectorType y = FileReader::y<ScalarType>(std::string(""));
+    VectorType theta(X.size1());
 
     CostFunction<ScalarType> cost_function(X, y);
-
     ScalarType cost = cost_function(theta);
 
-    std::cout << "Cost: " << cost;
+    std::cout << "Cost: " << cost << " dot: " << viennacl::linalg::inner_prod(y, y);
 
     return 0;
 }

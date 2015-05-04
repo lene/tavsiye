@@ -16,6 +16,6 @@ MESSAGE(WARNING "Libs: " ${OPENCL_LIBRARIES})
 set(LIBS "${LIBS} -L/opt/AMDAPPSDK-2.9-1/lib/x86_64 -lOpenCL")
 
 set(SOURCE_FILES main.cpp)
-add_executable(tavsiye ${SOURCE_FILES} Timer.cpp Timer.h RandomFiller.cpp RandomFiller.h BenchmarkVienna.impl.h BenchmarkVienna.h CostFunction.impl.h CostFunction.h FileReader.impl.h FileReader.h)
+add_executable(tavsiye ${SOURCE_FILES} Timer.cpp Timer.h RandomFiller.cpp RandomFiller.h BenchmarkVienna.impl.h BenchmarkVienna.h CostFunction.impl.h CostFunction.h FileReader.impl.h FileReader.h MatrixPrinter.h  VectorPrinter.h)
 # also, fuck the attempt above. in fact, fuck CMake.
 target_link_libraries (tavsiye -L/opt/AMDAPPSDK-2.9-1/lib/x86_64 -lOpenCL)

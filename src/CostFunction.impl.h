@@ -5,6 +5,7 @@
 #include "CostFunction.h"
 
 #include "viennacl/linalg/inner_prod.hpp"
+#include "viennacl/linalg/prod.hpp"
 
 template <typename ScalarType>
 CostFunction<ScalarType>::CostFunction(
@@ -22,7 +23,7 @@ function J = computeCostMulti(X, y, theta)
  */
 template <typename ScalarType>
 viennacl::scalar<ScalarType> CostFunction<ScalarType>::operator()(const viennacl::vector<ScalarType> &theta) {
-    viennacl::vector<ScalarType> h_theta = viennacl::linalg::prod(_X, theta);
+    viennacl::vector<ScalarType> h_theta = viennacl::linalg::prod(trans(_X), theta);
     viennacl::vector<ScalarType> deviation = h_theta-_y;
     return viennacl::linalg::inner_prod(deviation, deviation);
 }
