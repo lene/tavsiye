@@ -14,8 +14,7 @@ class CostFunction {
 public:
     /**
      *  X: features
-     *  y: training examples (y_i = f(X_i)
-     *  theta: hypothesis parameters
+     *  y: training examples (y_i = f(X_i))
      */
     CostFunction(
             const viennacl::matrix<ScalarType> &X,
@@ -25,8 +24,8 @@ public:
     viennacl::scalar<ScalarType> operator()(const viennacl::vector<ScalarType> &theta);
 
 private:
-    const viennacl::matrix<ScalarType> &_X;
-    const viennacl::vector<ScalarType> &_y;
+    const viennacl::matrix<ScalarType> &X_;
+    const viennacl::vector<ScalarType> &y_;
 };
 
 #include "CostFunction.impl.h"

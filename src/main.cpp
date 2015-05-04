@@ -1,8 +1,7 @@
 
 #include "FileReader.h"
-#include "MatrixPrinter.h"
-#include "VectorPrinter.h"
 #include "CostFunction.h"
+#include "FeatureNormalize.h"
 
 #define VIENNACL_WITH_UBLAS 1
 #define VIENNACL_WITH_OPENCL 0
@@ -20,6 +19,9 @@ int main() {
     MatrixType X = FileReader::X<ScalarType>(std::string(""));
     VectorType y = FileReader::y<ScalarType>(std::string(""));
     VectorType theta(X.size1());
+
+    FeatureNormalize<ScalarType> normalize(X);
+    auto throwaway = normalize.getNormalizedMatrix();
 
     CostFunction<ScalarType> cost_function(X, y);
     ScalarType cost = cost_function(theta);

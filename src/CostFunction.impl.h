@@ -10,7 +10,7 @@
 template <typename ScalarType>
 CostFunction<ScalarType>::CostFunction(
         const viennacl::matrix<ScalarType> &X,
-        const viennacl::vector<ScalarType> &y): _X(X), _y(y) { }
+        const viennacl::vector<ScalarType> &y): X_(X), y_(y) { }
 
 
 /**
@@ -23,7 +23,8 @@ function J = computeCostMulti(X, y, theta)
  */
 template <typename ScalarType>
 viennacl::scalar<ScalarType> CostFunction<ScalarType>::operator()(const viennacl::vector<ScalarType> &theta) {
-    viennacl::vector<ScalarType> h_theta = viennacl::linalg::prod(trans(_X), theta);
-    viennacl::vector<ScalarType> deviation = h_theta-_y;
+    assert(theta.size() == X_.size1());
+    viennacl::vector<ScalarType> h_theta = viennacl::linalg::prod(trans(X_), theta);
+    viennacl::vector<ScalarType> deviation = h_theta- y_;
     return viennacl::linalg::inner_prod(deviation, deviation);
 }
