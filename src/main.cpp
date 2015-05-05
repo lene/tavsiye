@@ -20,8 +20,8 @@ int main() {
     VectorType y = FileReader::y<ScalarType>(std::string(""));
     VectorType theta(X.size1());
 
-    FeatureNormalize<ScalarType> normalize(X);
-    auto throwaway = normalize.normalize();
+//    FeatureNormalize<ScalarType> normalize(X);
+//    auto throwaway = normalize.normalize();
 
     CostFunction<ScalarType> cost_function(X, y);
     ScalarType cost = cost_function(theta);
