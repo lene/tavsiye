@@ -21,7 +21,7 @@ int main() {
     VectorType theta(X.size1());
 
     FeatureNormalize<ScalarType> normalize(X);
-    auto throwaway = normalize.getNormalizedMatrix();
+    auto throwaway = normalize.normalize();
 
     CostFunction<ScalarType> cost_function(X, y);
     ScalarType cost = cost_function(theta);
