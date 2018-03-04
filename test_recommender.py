@@ -14,7 +14,7 @@ class TestRecommender(unittest.TestCase):
     def test_jaccard(self):
         self.assertEqual(jaccard_coefficient({'a', 'b'}, {'b', 'a'}), 1.)
         self.assertEqual(jaccard_coefficient({'a', 'b'}, {'c', 'd'}), 0.)
-        self.assertAlmostEqual(jaccard_coefficient({'a', 'b'}, {'a', 'c'}), 1./3.)
+        self.assertAlmostEqual(jaccard_coefficient({'a', 'b'}, {'a', 'c'}), 1. / 3.)
 
     def test_read_file(self):
         csv = read_file('testdata.csv')
@@ -111,25 +111,15 @@ class TestRecommender(unittest.TestCase):
                 )
             )
 
-    def test_minhash(self):
+    def test_minhashed_bounded_by_supplied_length(self):
         self.assertEqual(minhashed({1}), {1})
         self.assertEqual(minhashed({1}, 2), {1})
         bigger_set = {i for i in range(100)}
         self.assertLessEqual(len(minhashed(bigger_set, 10)), 10)
 
-    def test_minhash_similarity(self):
+    def test_minhash_similarity_succeeds_in_obvious_cases(self):
         self.assertEqual(minhash_similarity({1, 2}, {3, 4}), 0.)
         self.assertEqual(minhash_similarity({1, 2}, {2, 1}), 1.)
-
-    def test_minhash_with_testdata(self):
-        sets = read_file('testdata.csv')
-        similarity = similarity_matrix(sets, minhash_similarity)
-        self.assertEqual(recommendations(1, sets, similarity, 0.75), {42})
-        self.assertFalse(recommendations(3, sets, similarity, 0.75))
-        self.assertEqual(
-            recommendations(1, sets, similarity, 0.15),
-            (sets[2] | sets[3]) - sets[1]
-        )
 
     def test_minhash_with_strings(self):
         self.assertEqual(
@@ -166,6 +156,16 @@ class TestRecommender(unittest.TestCase):
                 (5, [65, 65, 65, 65, 65, 65, 65, 65, 65, 65])
             ]
 
+        )
+
+    def test_minhash_with_testdata(self):
+        sets = read_file('testdata.csv')
+        similarity = similarity_matrix(sets, minhash_similarity)
+        self.assertEqual(recommendations(1, sets, similarity, 0.75), {42})
+        self.assertFalse(recommendations(3, sets, similarity, 0.75))
+        self.assertEqual(
+            recommendations(1, sets, similarity, 0.15),
+            (sets[2] | sets[3]) - sets[1]
         )
 
 
