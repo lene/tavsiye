@@ -1,10 +1,10 @@
 A very basic recommendation engine implemented in Python.
 
 Usage:
-    python recommender.py [-h|-f FILENAME|--user USER|--set-comparison SET_COMPARISON|--cutoff CUTOFF]
+    `python recommender.py [-h|-f FILENAME|--user USER|--set-comparison SET_COMPARISON|--cutoff CUTOFF]`
 
 Running test suite:
-    python test_recommender.py
+    `python test_recommender.py`
 
 Implementation thoughts:
 - The entire recommendation algorithm can be found in compare_sets.py.
