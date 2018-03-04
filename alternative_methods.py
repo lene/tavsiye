@@ -3,19 +3,25 @@ __author__ = 'lene'
 from random import randint
 from sys import maxsize
 from operator import itemgetter
+from typing import Set, Callable, Sequence
+
+from typedefs import Item
 
 
-def asymmetric_similarity(set1, set2):
+HashFunction = Callable[[Item], int]
+
+
+def asymmetric_similarity(set1: Set[Item], set2: Set[Item]) -> float:
     """
     Here's an idea for a different metric for similarity: We are not interested in the length of
     set2, only of set1. This implies that this function is not commutative.
     In terms of the problem that means, roughly, a user is only interested if another user shares
     their preferences - not if they share the other user's preferences as well.
     """
-    return len(set1 & set2)/len(set1)
+    return len(set1 & set2) / len(set1)
 
 
-def minhash_similarity(set1, set2, length=100):
+def minhash_similarity(set1: Set[Item], set2: Set[Item], length: int=100) -> float:
     """
     An attempt at approximating the jaccard similarity with MinHash.
     Algorithm adapted from
@@ -28,16 +34,16 @@ def minhash_similarity(set1, set2, length=100):
     return len(y) / min(max(len(set1), len(set2)), length)
 
 
-def random_hash(item):
+def random_hash(item: Item) -> int:
     return (randint(1, maxsize) + item) % maxsize
 
 
-def minhashed(data, length=100, hash_func=random_hash):
+def minhashed(data: Set[Item], length: int=100, hash_func: HashFunction=random_hash):
     indexable = list(data)
     min_item_indices = [min_item_index(hash_func, indexable)[0] for _ in range(length)]
     return {indexable[i] for i in min_item_indices}
 
 
-def min_item_index(hash_func, indexable):
+def min_item_index(hash_func: HashFunction, indexable: Sequence[Item]):
     index_and_hash = [(i, hash_func(indexable[i])) for i in range(len(indexable))]
     return min(index_and_hash, key=itemgetter(1))

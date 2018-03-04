@@ -6,6 +6,14 @@ from compare_sets import jaccard_coefficient, similarity_matrix, recommendations
 from read_file import read_file
 from alternative_methods import asymmetric_similarity, minhash_similarity
 
+from typing import Dict
+from typedefs import SimilarityFunction
+
+similarity_functions = {
+    'asymmetric_similarity': asymmetric_similarity,
+    'minhash_similarity': minhash_similarity
+}  # type: Dict[str, SimilarityFunction]
+
 parser = ArgumentParser(
     description="Give a set of recommended products for a user based on the user's liked products "
                 "and the products other users with similar taste liked.")
@@ -29,10 +37,9 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-set_comparison = {
-    'asymmetric_similarity': asymmetric_similarity,
-    'minhash_similarity': minhash_similarity
-}.get(args.set_comparison, jaccard_coefficient)
+set_comparison = similarity_functions.get(
+    args.set_comparison, jaccard_coefficient
+)
 
 sets = read_file(args.filename)
 similarity = similarity_matrix(sets, set_comparison)
