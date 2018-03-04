@@ -1,10 +1,13 @@
 from compare_sets import jaccard_coefficient, similarity_matrix, similar_users, recommendations
 from alternative_methods import asymmetric_similarity, minhash_similarity, minhashed
 from read_file import read_file
+from minhash import minhash
+
+import unittest
+from functools import reduce
 
 __author__ = 'lene'
 
-import unittest
 
 class TestRecommender(unittest.TestCase):
 
@@ -17,23 +20,27 @@ class TestRecommender(unittest.TestCase):
         csv = read_file('testdata.csv')
         self.assertIsInstance(csv, dict)
         self.assertEqual(len(csv), 5)
-        self.assertDictEqual(csv, { 1: {12, 99, 32}, 2: {32, 77, 54, 66}, 3: {99, 42, 12, 32}, 4: {77, 66, 47}, 5: {65}})
+        self.assertDictEqual(
+            csv,
+            {1: {12, 99, 32}, 2: {32, 77, 54, 66}, 3: {99, 42, 12, 32}, 4: {77, 66, 47}, 5: {65}}
+        )
 
     def test_similarity_matrix_basic(self):
         self.assertDictEqual(
-            similarity_matrix({ 1: {'a'}, 2: {'a'} }), { 1: { 1: 1.0, 2: 1.0 }, 2: { 1: 1.0, 2: 1.0 } }
+            similarity_matrix({1: {'a'}, 2: {'a'}}),
+            {1: {1: 1.0, 2: 1.0}, 2: {1: 1.0, 2: 1.0}}
         )
         self.assertDictEqual(
-            similarity_matrix({ 1: {'a'}, 2: {'b'} }), { 1: { 1: 1.0, 2: 0.0 }, 2: { 1: 0.0, 2: 1.0 } }
+            similarity_matrix({1: {'a'}, 2: {'b'}}),
+            {1: {1: 1.0, 2: 0.0}, 2: {1: 0.0, 2: 1.0}}
         )
 
     def test_similarity_matrix_elements_equal_to_themselves(self):
-        larger_list = { i: {i} for i in range(100) }
+        larger_list = {i: {i} for i in range(100)}
         larger_list_matrix = similarity_matrix(larger_list)
         self.assertEqual(len(larger_list_matrix), len(larger_list))
         for i in range(len(larger_list)):
             self.assertEqual(larger_list_matrix[i][i], 1.)
-
 
     def test_similarity_matrix_with_testdata(self):
         self.assertDictEqual(
@@ -47,12 +54,12 @@ class TestRecommender(unittest.TestCase):
         )
 
     def test_similar_users(self):
-        similarity = similarity_matrix({ 1: {'a'}, 2: {'a'} })
+        similarity = similarity_matrix({1: {'a'}, 2: {'a'}})
         self.assertEqual(similar_users(1, similarity, 0.2), [2])
         self.assertEqual(similar_users(2, similarity, 0.2), [1])
         self.assertEqual(similar_users(1, similarity, 1.0), [2])
 
-        similarity = similarity_matrix({ 1: {'a'}, 2: {'b'} })
+        similarity = similarity_matrix({1: {'a'}, 2: {'b'}})
         self.assertEqual(similar_users(1, similarity, 0.2), [])
 
         similarity = similarity_matrix(read_file('testdata.csv'))
@@ -60,7 +67,7 @@ class TestRecommender(unittest.TestCase):
         self.assertEqual(similar_users(2, similarity, 0.15), [1, 4])
 
     def test_recommendations(self):
-        sets = { 1: {'a'}, 2: {'a', 'b'} }
+        sets = {1: {'a'}, 2: {'a', 'b'}}
         similarity = similarity_matrix(sets)
         self.assertEqual(recommendations(1, sets, similarity, 0.4), {'b'})
         self.assertEqual(recommendations(2, sets, similarity, 0.4), set())
@@ -87,10 +94,10 @@ class TestRecommender(unittest.TestCase):
     def test_asymmetric_similarity(self):
         self.assertEqual(asymmetric_similarity({'a'}, {'a', 'b'}), 1)
         self.assertEqual(asymmetric_similarity({'a', 'b'}, {'a'}), 0.5)
-        sets = { 1: {'a'}, 2: {'a', 'b'} }
+        sets = {1: {'a'}, 2: {'a', 'b'}}
         similarity = similarity_matrix(sets, asymmetric_similarity)
         self.assertDictEqual(
-            similarity, { 1: { 1: 1.0, 2: 1.0 }, 2: { 1: 0.5, 2: 1.0 } }
+            similarity, {1: {1: 1.0, 2: 1.0}, 2: {1: 0.5, 2: 1.0}}
         )
 
     def test_asymmetric_similarity_returns_superset_of_jaccard(self):
@@ -99,13 +106,15 @@ class TestRecommender(unittest.TestCase):
         similarity2 = similarity_matrix(sets, asymmetric_similarity)
         for i in sets.keys():
             self.assertTrue(
-                recommendations(i, sets, similarity1, 0.25).issubset(recommendations(i, sets, similarity2, 0.25))
+                recommendations(i, sets, similarity1, 0.25).issubset(
+                    recommendations(i, sets, similarity2, 0.25)
+                )
             )
 
     def test_minhash(self):
         self.assertEqual(minhashed({1}), {1})
         self.assertEqual(minhashed({1}, 2), {1})
-        bigger_set = { i for i in range(100) }
+        bigger_set = {i for i in range(100)}
         self.assertLessEqual(len(minhashed(bigger_set, 10)), 10)
 
     def test_minhash_similarity(self):
@@ -121,6 +130,44 @@ class TestRecommender(unittest.TestCase):
             recommendations(1, sets, similarity, 0.15),
             (sets[2] | sets[3]) - sets[1]
         )
+
+    def test_minhash_with_strings(self):
+        self.assertEqual(
+            minhash(
+                [
+                    ("haoyuan", ["ak420", "ipad", "girlfriend"]),
+                    ("fenfen", ["ak46", "bayaji", "genjiu"])
+                ],
+                5, 0
+            ),
+            [
+                ('haoyuan', ['ipad', 'girlfriend', 'ak420', 'ak420', 'ipad']),
+                ('fenfen', ['ak46', 'bayaji', 'ak46', 'bayaji', 'bayaji'])
+            ]
+        )
+
+    def test_minhash_with_ints(self):
+        self.assertEqual(
+            minhash(
+                [
+                    (1, [12, 99, 32]),
+                    (2, [32, 77, 54, 66]),
+                    (3, [99, 42, 12, 32]),
+                    (4, [77, 66, 47]),
+                    (5, [65])
+                ],
+                10, 0
+            ),
+            [
+                (1, [99, 32, 12, 12, 99, 12, 99, 12, 99, 99]),
+                (2, [32, 66, 77, 77, 32, 66, 54, 54, 66, 32]),
+                (3, [32, 42, 32, 42, 99, 32, 32, 99, 12, 32]),
+                (4, [66, 47, 47, 66, 77, 66, 47, 47, 77, 47]),
+                (5, [65, 65, 65, 65, 65, 65, 65, 65, 65, 65])
+            ]
+
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
