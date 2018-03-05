@@ -24,13 +24,17 @@ def jaccard_coefficient(set1: Set[Item], set2: Set[Item]) -> float:
 
 
 def similarity_matrix(
-        liked_items: LikedItems, similarity: SimilarityFunction=jaccard_coefficient
+        liked_items: LikedItems, similarity: SimilarityFunction=jaccard_coefficient,
+        users: List[User]=None
 ) -> SimilarityMatrix:
     return {
-        user1: {
-            user2: similarity(set1, set2) for (user2, set2) in liked_items.items()
-        } for (user1, set1) in liked_items.items()
+        user1: similarity_vector(set1, liked_items, similarity)
+        for (user1, set1) in liked_items.items() if users is None or user1 in users
     }
+
+
+def similarity_vector(set1: Set[Item], liked_items: LikedItems, similarity: SimilarityFunction):
+    return {user2: similarity(set1, set2) for (user2, set2) in liked_items.items()}
 
 
 def similar_users(user: User, user_similarity: SimilarityMatrix, cutoff: float) -> List[User]:
